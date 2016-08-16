@@ -33,11 +33,7 @@ func main() {
     var balls []*ball
 
     for n := 0 ; n < 50 ; n++ {
-        b := ball{}
-        b.x = rand.Int31n(WIDTH)
-        b.y = rand.Int31n(HEIGHT)
-        b.speedx = rand.Int31n(4)
-        b.speedy = rand.Int31n(4)
+        b := ball{x: rand.Int31n(WIDTH), y: rand.Int31n(HEIGHT), speedx: rand.Int31n(4), speedy: rand.Int31n(4)}
         balls = append(balls, &b)
     }
 
