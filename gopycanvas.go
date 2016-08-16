@@ -57,6 +57,11 @@ func Sprite(filename string, x int32, y int32) {
 }
 
 func EndFrame() {
+
+    // This tells tkinter to update its idle tasks so that "sprites" actually get drawn.
+    // It also waits for a response via stdout before continuing, which is helpful to
+    // prevent the Golang program from getting ahead of tkinter.
+
     Command("ENDFRAME", true)
 }
 
