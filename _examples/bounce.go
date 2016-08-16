@@ -32,7 +32,7 @@ func main() {
 
     var balls []*ball
 
-    for n := 0 ; n < 5 ; n++ {
+    for n := 0 ; n < 50 ; n++ {
         b := ball{}
         b.x = rand.Int31n(WIDTH)
         b.y = rand.Int31n(HEIGHT)
