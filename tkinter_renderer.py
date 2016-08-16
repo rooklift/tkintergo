@@ -28,7 +28,7 @@ def parse_args():
 		dest = "directory",
 		type = "str",
 		help = "GFX directory [default: %default]")
-	opt_parser.set_defaults(charfile = ".")
+	opt_parser.set_defaults(directory = ".")
 
 	opt_parser.add_option(
 		"--bg",
