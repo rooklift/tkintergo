@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
     "math/rand"
     "os"
     "path/filepath"
@@ -52,7 +53,8 @@ func main() {
 
     our_dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
     if err != nil {
-        return
+        fmt.Fprintf(os.Stderr, "Couldn't find our own directory!\n")
+        os.Exit(1)
     }
     gfx_path := filepath.Join(our_dir, GFX_DIR_NAME)
 
