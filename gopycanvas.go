@@ -20,8 +20,6 @@ import (
 
 const RENDERER = "tkinter_renderer.py"
 
-var stdout_chan = make(chan string)
-
 var keymap = make(map[string]bool)
 var keymap_MUTEX sync.Mutex
 
@@ -29,29 +27,9 @@ var stdin_pipe io.WriteCloser
 var stdout_pipe io.ReadCloser
 var stderr_pipe io.ReadCloser
 
-func pipe_relay(p io.ReadCloser, ch chan string, f io.ReadWriteCloser) {
+func stderr_watcher() {
 
-    // Relay a pipe to both a channel and a file (though either can be nil)
-
-    scanner := bufio.NewScanner(p)
-
-    for scanner.Scan() {
-
-        s := scanner.Text()
-
-        if ch != nil {
-            ch <- s
-        }
-
-        if f != nil {
-            fmt.Fprintf(f, "%s\n", s)
-        }
-    }
-}
-
-func stderr_watcher(p io.ReadCloser) {
-
-    scanner := bufio.NewScanner(p)
+    scanner := bufio.NewScanner(stderr_pipe)
 
     for scanner.Scan() {
 
@@ -91,7 +69,8 @@ func Command(msg string, need_ack bool) {
     fmt.Fprintf(stdin_pipe, msg + "\n")
 
     if need_ack {
-        <- stdout_chan
+        scanner := bufio.NewScanner(stdout_pipe)
+        scanner.Scan()
     }
 }
 
@@ -126,8 +105,7 @@ func Start(width int, height int, directory string, bg string) error {
     stdout_pipe, _ = exec_command.StdoutPipe()
     stderr_pipe, _ = exec_command.StderrPipe()
 
-    go pipe_relay(stdout_pipe, stdout_chan, nil)
-    go stderr_watcher(stderr_pipe)
+    go stderr_watcher()
 
     err := exec_command.Start()
     if err != nil {
