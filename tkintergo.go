@@ -1,4 +1,4 @@
-package gopycanvas
+package tkintergo
 
 // Comments:
 //

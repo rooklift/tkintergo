@@ -7,7 +7,7 @@ import (
     "path/filepath"
     "time"
 
-    py "github.com/fohristiwhirl/gopycanvas"
+    py "github.com/fohristiwhirl/tkintergo"
 )
 
 const (
