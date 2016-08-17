@@ -4,7 +4,7 @@ This Go package spawns a Python subprocess that uses Tkinter to draw sprites acc
 
 Basic usage looks like this:
 
-```
+``` go
 func main() {
   tkintergo.Start(WIDTH, HEIGHT, GFX_DIRECTORY, BG_COLOUR)    // e.g. (800, 600, "gfx", "black")
   for {
