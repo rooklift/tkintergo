@@ -64,7 +64,7 @@ func main() {
     var player *ball
 
     for n := 0 ; n < 50 ; n++ {
-        b := ball{x: rand.Int31n(WIDTH), y: rand.Int31n(HEIGHT), speedx: rand.Int31n(4), speedy: rand.Int31n(4)}
+        b := ball{x: rand.Int31n(WIDTH), y: rand.Int31n(HEIGHT), speedx: rand.Int31n(7) - 3, speedy: rand.Int31n(7) - 3}
         balls = append(balls, &b)
     }
 
