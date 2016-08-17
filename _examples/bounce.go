@@ -2,6 +2,8 @@ package main
 
 import (
     "math/rand"
+    "os"
+    "path/filepath"
     "time"
 
     py "github.com/fohristiwhirl/gopycanvas"
@@ -10,6 +12,8 @@ import (
 const (
     WIDTH = 800
     HEIGHT = 600
+
+    GFX_DIR_NAME = "gfx"
 )
 
 type ball struct {
@@ -45,7 +49,14 @@ func (b *ball) playermove() {
 }
 
 func main() {
-    py.Start(WIDTH, HEIGHT, "gfx", "black")
+
+    our_dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+    if err != nil {
+        return
+    }
+    gfx_path := filepath.Join(our_dir, GFX_DIR_NAME)
+
+    py.Start(WIDTH, HEIGHT, gfx_path, "black")
 
     var balls []*ball
     var player *ball
