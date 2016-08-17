@@ -54,7 +54,7 @@ func stderr_watcher() {
     }
 }
 
-func KeyState(sym string) bool {
+func KeyDown(sym string) bool {
     keymap_MUTEX.Lock()
     ret := keymap[sym]      // Will be false if sym is not in the keymap at all
     keymap_MUTEX.Unlock()

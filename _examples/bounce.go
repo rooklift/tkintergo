@@ -33,16 +33,16 @@ func (b *ball) move() {
 
 func (b *ball) playermove() {
     b.speedx, b.speedy = 0, 0
-    if py.KeyState("a") {
+    if py.KeyDown("a") {
         b.speedx -= 2
     }
-    if py.KeyState("d") {
+    if py.KeyDown("d") {
         b.speedx += 2
     }
-    if py.KeyState("w") {
+    if py.KeyDown("w") {
         b.speedy -= 2
     }
-    if py.KeyState("s") {
+    if py.KeyDown("s") {
         b.speedy += 2
     }
     b.move()
