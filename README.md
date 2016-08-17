@@ -17,4 +17,4 @@ func main() {
 }
 ```
 
-Key states can be accessed with the KeyDown function, e.g. tkintergo.KeyDown("space") returns true if the spacebar is down.
+Key states can be accessed with the KeyDown function, e.g. `tkintergo.KeyDown("space")` returns true if the spacebar is down.
