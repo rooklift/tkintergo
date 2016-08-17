@@ -5,6 +5,10 @@ package gopycanvas
 // - We send the renderer a bunch of sprites to render, followed by "ENDFRAME".
 // - The renderer sends "ENDFRAME" back as an acknowledgement.
 // - It also sends key presses and key releases via Stderr.
+//
+// It's important that we send the sprites in bursts, because once we send the
+// first sprite of a frame, the renderer (at least the Tkinter version) spinlocks
+// until the frame ends.
 
 import (
     "bufio"
