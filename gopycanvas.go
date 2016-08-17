@@ -68,7 +68,7 @@ func keymapper(p io.ReadCloser) {
             keymap[sym] = false
             keymap_MUTEX.Unlock()
         } else {
-            fmt.Fprintf(os.Stderr, s)
+            fmt.Fprintf(os.Stderr, "(py stderr) " + s + "\n")
         }
     }
 }

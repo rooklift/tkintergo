@@ -1,6 +1,7 @@
 import optparse, os, queue, sys, threading, tkinter
 
 gfx_dict = dict()
+unknown_gfx = set()
 
 
 def parse_args():
@@ -81,7 +82,13 @@ class Renderer(tkinter.Canvas):
 
 				if len(fields) == 3:
 					spritename, x, y = fields[0], int(fields[1]), int(fields[2])
-					self.create_image(x, y, image = gfx_dict[spritename])
+					if spritename in gfx_dict:
+						self.create_image(x, y, image = gfx_dict[spritename])
+					else:
+						if spritename not in unknown_gfx:
+							unknown_gfx.add(spritename)
+							print("{} not known".format(spritename), file = sys.stderr)
+							sys.stderr.flush()
 
 				if len(fields) == 1:
 					if fields[0] == "ENDFRAME":
@@ -115,9 +122,11 @@ class Root(tkinter.Tk):
 
 	def keypress(self, event):
 		print("KEY", event.keysym, file = sys.stderr)
+		sys.stderr.flush()
 
 	def keyrelease(self, event):
 		print("REL", event.keysym, file = sys.stderr)
+		sys.stderr.flush()
 
 
 
