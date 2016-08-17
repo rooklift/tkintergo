@@ -110,6 +110,15 @@ class Root(tkinter.Tk):
 		virtue = Renderer(self, width = opts.width, height = opts.height, bd = 0, highlightthickness = 0, bg = opts.bg)
 		virtue.pack()
 
+		self.bind("<Key>", self.keypress)
+		self.bind("<KeyRelease>", self.keyrelease)
+
+	def keypress(self, event):
+		print("KEY", event.keysym, file = sys.stderr)
+
+	def keyrelease(self, event):
+		print("REL", event.keysym, file = sys.stderr)
+
 
 
 if __name__ == "__main__":

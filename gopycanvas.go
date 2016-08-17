@@ -1,5 +1,11 @@
 package gopycanvas
 
+// Comments:
+//
+// - We send the renderer a bunch of sprites to render, followed by "ENDFRAME".
+// - The renderer sends "ENDFRAME" back as an acknowledgement.
+// - It also sends key presses and key releases via Stderr.
+
 import (
     "bufio"
     "fmt"
@@ -9,11 +15,15 @@ import (
     "path/filepath"
     "runtime"
     "strings"
+    "sync"
 )
 
 const RENDERER = "tkinter_renderer.py"
 
 var stdout_chan = make(chan string)
+
+var keymap = make(map[string]bool)
+var keymap_MUTEX sync.Mutex
 
 var stdin_pipe io.WriteCloser
 var stdout_pipe io.ReadCloser
@@ -39,6 +49,37 @@ func pipe_relay(p io.ReadCloser, ch chan string, f io.ReadWriteCloser) {
     }
 }
 
+func keymapper(p io.ReadCloser) {
+
+    scanner := bufio.NewScanner(p)
+
+    for scanner.Scan() {
+
+        s := scanner.Text()
+
+        if strings.HasPrefix(s, "KEY") && len(s) > 4 {
+            sym := s[4:]
+            keymap_MUTEX.Lock()
+            keymap[sym] = true
+            keymap_MUTEX.Unlock()
+        } else if strings.HasPrefix(s, "REL") && len(s) > 4 {
+            sym := s[4:]
+            keymap_MUTEX.Lock()
+            keymap[sym] = false
+            keymap_MUTEX.Unlock()
+        } else {
+            fmt.Fprintf(os.Stderr, s)
+        }
+    }
+}
+
+func KeyState(sym string) bool {
+    keymap_MUTEX.Lock()
+    ret := keymap[sym]      // Will be false if sym is not in the keymap at all
+    keymap_MUTEX.Unlock()
+    return ret
+}
+
 func Command(msg string, need_ack bool) {
 
     // It's important that need_ack is only true for commands that the renderer will actually acknowledge
@@ -58,9 +99,10 @@ func Sprite(filename string, x int32, y int32) {
 
 func EndFrame() {
 
-    // This tells tkinter to update its idle tasks so that "sprites" actually get drawn.
-    // It also waits for a response via stdout before continuing, which is helpful to
-    // prevent the Golang program from getting ahead of tkinter.
+    // This tells the renderer to draw the frame. (In the case of the Tkinter renderer,
+    // this means calling update_idletasks()). It also waits for a response via stdout
+    // before continuing, which is helpful to prevent the Golang program from getting
+    // ahead of the renderer.
 
     Command("ENDFRAME", true)
 }
@@ -82,7 +124,7 @@ func Start(width int, height int, directory string, bg string) error {
     stderr_pipe, _ = exec_command.StderrPipe()
 
     go pipe_relay(stdout_pipe, stdout_chan, nil)
-    go pipe_relay(stderr_pipe, nil, os.Stderr)
+    go keymapper(stderr_pipe)
 
     err := exec_command.Start()
     if err != nil {

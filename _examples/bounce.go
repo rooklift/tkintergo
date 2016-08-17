@@ -4,7 +4,7 @@ import (
     "math/rand"
     "time"
 
-    "github.com/fohristiwhirl/gopycanvas"
+    py "github.com/fohristiwhirl/gopycanvas"
 )
 
 const (
@@ -17,32 +17,55 @@ type ball struct {
 }
 
 func (b *ball) move() {
-    b.x += b.speedx
-    b.y += b.speedy
     if (b.x > WIDTH && b.speedx > 0) || (b.x < 0 && b.speedx < 0) {
         b.speedx *= -1
     }
     if (b.y > HEIGHT && b.speedy > 0) || (b.y < 0 && b.speedy < 0) {
         b.speedy *= -1
     }
+    b.x += b.speedx
+    b.y += b.speedy
+}
+
+func (b *ball) playermove() {
+    b.speedx, b.speedy = 0, 0
+    if py.KeyState("a") {
+        b.speedx -= 2
+    }
+    if py.KeyState("d") {
+        b.speedx += 2
+    }
+    if py.KeyState("w") {
+        b.speedy -= 2
+    }
+    if py.KeyState("s") {
+        b.speedy += 2
+    }
+    b.move()
 }
 
 func main() {
-    gopycanvas.Start(WIDTH, HEIGHT, "gfx", "black")
+    py.Start(WIDTH, HEIGHT, "gfx", "black")
 
     var balls []*ball
+    var player *ball
 
     for n := 0 ; n < 50 ; n++ {
         b := ball{x: rand.Int31n(WIDTH), y: rand.Int31n(HEIGHT), speedx: rand.Int31n(4), speedy: rand.Int31n(4)}
         balls = append(balls, &b)
     }
 
+    player = new(ball)
+    player.x, player.y = 400, 300
+
     for {
         for _, b := range balls {
             b.move()
-            gopycanvas.Sprite("white.gif", b.x, b.y)
+            py.Sprite("white.gif", b.x, b.y)
         }
-        gopycanvas.EndFrame()
+        player.playermove()
+        py.Sprite("green.gif", player.x, player.y)
+        py.EndFrame()
         time.Sleep(10 * time.Millisecond)
     }
 }
