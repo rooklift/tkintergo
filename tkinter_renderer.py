@@ -120,6 +120,8 @@ class Root(tkinter.Tk):
 		self.bind("<Key>", self.keypress)
 		self.bind("<KeyRelease>", self.keyrelease)
 
+		self.protocol("WM_DELETE_WINDOW", self.terminate)
+
 	def keypress(self, event):
 		print("KEY", event.keysym, file = sys.stderr)
 		sys.stderr.flush()
@@ -127,6 +129,12 @@ class Root(tkinter.Tk):
 	def keyrelease(self, event):
 		print("REL", event.keysym, file = sys.stderr)
 		sys.stderr.flush()
+
+	def terminate(self):
+		print("QUIT", file = sys.stderr)
+		sys.stderr.flush()
+		sys.exit()
+
 
 
 

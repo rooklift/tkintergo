@@ -49,7 +49,7 @@ func pipe_relay(p io.ReadCloser, ch chan string, f io.ReadWriteCloser) {
     }
 }
 
-func keymapper(p io.ReadCloser) {
+func stderr_watcher(p io.ReadCloser) {
 
     scanner := bufio.NewScanner(p)
 
@@ -67,8 +67,11 @@ func keymapper(p io.ReadCloser) {
             keymap_MUTEX.Lock()
             keymap[sym] = false
             keymap_MUTEX.Unlock()
+        } else if s == "QUIT" {
+            fmt.Fprintf(os.Stderr, "%s has quit\n", RENDERER)
+            os.Exit(0)
         } else {
-            fmt.Fprintf(os.Stderr, "(py stderr) " + s + "\n")
+            fmt.Fprintf(os.Stderr, "(renderer) " + s + "\n")
         }
     }
 }
@@ -124,7 +127,7 @@ func Start(width int, height int, directory string, bg string) error {
     stderr_pipe, _ = exec_command.StderrPipe()
 
     go pipe_relay(stdout_pipe, stdout_chan, nil)
-    go keymapper(stderr_pipe)
+    go stderr_watcher(stderr_pipe)
 
     err := exec_command.Start()
     if err != nil {
